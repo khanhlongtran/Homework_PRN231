@@ -1,0 +1,121 @@
+﻿@page "{id}"
+@model FrontEnd.Pages.Products.EditModel
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<h2>Edit Product</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label>Name</label>
+        <input asp-for="PName" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Price</label>
+        <input asp-for="PPrice" type="number" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Quantity</label>
+        <input asp-for="PQuantity" type="number" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Category</label>
+        <select asp-for="CategoryId" class="form-control">
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Value">@category.Text</option>
+            }
+        </select>
+    </div>
+
+    <!-- Hiển thị danh sách ảnh hiện tại -->
+    <div class="form-group">
+        <label>Current Images</label><br>
+        <div id="currentImagesContainer" class="d-flex flex-wrap">
+            @if (Model.ImageList != null && Model.ImageList.Count > 0)
+            {
+                @foreach (var image in Model.ImageList)
+                {
+                    <div class="image-item" style="position: relative; margin-right: 10px;">
+                        <img src="http://localhost:5036/Products/images/@image"
+                             alt="Product Image"
+                             style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #ccc; padding: 5px;" />
+                        <button type="button" class="btn btn-danger btn-sm delete-image"
+                                onclick="removeCurrentImage('@image')"
+                                style="position: absolute; top: -5px; right: -5px; border-radius: 50%;">×</button>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No images available</p>
+            }
+        </div>
+    </div>
+
+    <!-- Thêm ảnh mới -->
+    <div class="form-group">
+        <label>New Images</label>
+        <input type="file" id="newImagesInput" asp-for="ImageFiles" class="form-control" multiple />
+    </div>
+
+    <!-- Hiển thị preview ảnh mới -->
+    <div id="previewContainer" class="d-flex flex-wrap mt-2"></div>
+    <input type="hidden" id="deletedImagesInput" name="DeletedImages" />
+    <!-- Lưu danh sách ảnh hiện tại (cập nhật sau khi xóa) -->
+    <input type="hidden" id="currentImagesInput" name="ImageList" value="@string.Join(";", Model.ImageList)" />
+    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+    <a asp-page="Index" class="btn btn-secondary mt-3">Cancel</a>
+</form>
+
+<script>
+    let deletedImages = [];
+
+    // Xóa ảnh hiện tại
+    function removeCurrentImage(imageName) {
+        var container = document.getElementById("currentImagesContainer");
+        var images = container.getElementsByTagName("img");
+
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].src.includes(imageName)) {
+
+                // Thêm ảnh vào danh sách đã xóa
+                deletedImages.push(imageName);
+
+                // Cập nhật danh sách ảnh còn lại
+                let currentImagesInput = document.getElementById("currentImagesInput");
+                let remainingImages = currentImagesInput.value.split(',').filter(img => img !== imageName);
+                currentImagesInput.value = remainingImages.join(',');
+
+                images[i].parentElement.remove();
+                break;
+            }
+        }
+    }
+
+    // Trước khi submit, cập nhật danh sách ảnh đã xóa vào input ẩn, gửi 1 list các thằng bị xóa lên
+    document.querySelector("form").addEventListener("submit", function () {
+        document.getElementById("deletedImagesInput").value = deletedImages;
+    });
+
+
+    // Hiển thị preview ảnh mới trước khi upload
+    document.getElementById("newImagesInput").addEventListener("change", function (event) {
+        var previewContainer = document.getElementById("previewContainer");
+        previewContainer.innerHTML = ""; // Xóa preview cũ
+
+        Array.from(event.target.files).forEach(file => {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var imgElement = document.createElement("img");
+                imgElement.src = e.target.result;
+                imgElement.style = "width: 100px; height: 100px; object-fit: cover; border: 1px solid #ccc; padding: 5px; margin-right: 10px;";
+                previewContainer.appendChild(imgElement);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>

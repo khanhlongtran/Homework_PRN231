@@ -1,0 +1,63 @@
+﻿@page
+@model FrontEnd.Pages.Products.IndexModel
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<h2>Product List</h2>
+<a asp-page="Create" class="btn btn-success">Create New Product</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products)
+        {
+            <tr>
+                <td>
+                    @if (Model.ProductImages.ContainsKey(product.Id) && Model.ProductImages[product.Id].Any())
+                    {
+                        var images = Model.ProductImages[product.Id]; // Lấy danh sách ảnh
+                        var displayedImages = images.Take(3).ToList(); // Lấy 3 ảnh đầu tiên
+                        var remainingCount = images.Count - displayedImages.Count; // Đếm ảnh còn lại
+
+                        @foreach (var image in displayedImages)
+                        {
+                            <img src="http://localhost:5036/Products/images/@image"
+                                 alt="@product.PName"
+                                 style="width: 50px; height: auto; margin-right: 5px;" />
+                        }
+
+                        @if (remainingCount > 0)
+                        {
+                            <span style="font-weight: bold; color: red;">+@remainingCount</span>
+                        }
+                    }
+                    else
+                    {
+                        <p>No images</p>
+                    }
+
+                </td>
+                <td>@product.PName</td>
+                <td>@product.PPrice</td>
+                <td>@product.CategoryName</td>
+                <td>
+                    <a asp-page="Details" asp-route-id="@product.Id" class="btn btn-primary">View</a>
+                    <a asp-page="Edit" asp-route-id="@product.Id" class="btn btn-warning">Edit</a>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@product.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

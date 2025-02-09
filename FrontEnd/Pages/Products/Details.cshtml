@@ -1,0 +1,110 @@
+﻿@page "{id}"
+@model FrontEnd.Pages.Products.DetailsModel
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<style>
+    /* Định dạng khung cố định cho ảnh */
+    .image-container {
+        width: 400px; /* Độ rộng cố định */
+        height: 400px; /* Độ cao cố định */
+        border: 2px solid #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        margin: 0 auto;
+    }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Giữ nguyên tỉ lệ, không méo */
+            transition: transform 0.25s ease;
+            cursor: zoom-in;
+        }
+
+    input[type=checkbox] {
+        display: none;
+    }
+
+        input[type=checkbox]:checked ~ label > img {
+            transform: scale(2);
+            cursor: zoom-out;
+        }
+
+    /* Thumbnail images */
+    .small-images {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+        .small-images img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+            .small-images img:hover {
+                border: 2px solid #007bff;
+            }
+</style>
+
+<div class="container mt-4">
+    <h2 class="text-center">Product Details</h2>
+
+    @if (Model.Product != null)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <!-- Ảnh lớn trong khung cố định -->
+                <div class="image-container">
+                    <input type="checkbox" id="zoomCheck">
+                    <label for="zoomCheck">
+                        <img id="mainImage"
+                             src="http://localhost:5036/Products/images/@Model.ProductImages.FirstOrDefault()"
+                             alt="@Model.Product.PName" />
+                    </label>
+                </div>
+                <!-- Danh sách ảnh nhỏ -->
+                <div class="small-images">
+                    @foreach (var image in Model.ProductImages)
+                    {
+                        <img src="http://localhost:5036/Products/images/@image"
+                             alt="@Model.Product.PName"
+                             onclick="changeMainImage('http://localhost:5036/Products/images/@image')" />
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h3>@Model.Product.PName</h3>
+                <p><strong>Price:</strong> @Model.Product.PPrice</p>
+                <p><strong>Quantity:</strong> @Model.Product.PQuantity</p>
+                <p><strong>Category:</strong> @Model.Product.CategoryName</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="text-danger">Product not found.</p>
+    }
+
+    <a asp-page="Index" class="btn btn-secondary mt-3">Back to List</a>
+</div>
+
+<script>
+    function changeMainImage(src) {
+        $("#mainImage").attr("src", src);
+        $("#zoomCheck").prop("checked", false); // Reset zoom khi đổi ảnh
+    }
+</script>
