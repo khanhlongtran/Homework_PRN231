@@ -1,3 +1,5 @@
+﻿using FrontEnd.Handler;
+
 namespace FrontEnd
 {
     public class Program
@@ -8,7 +10,10 @@ namespace FrontEnd
 
             // Add services to the container.
             builder.Services.AddRazorPages();
-            builder.Services.AddHttpClient();
+            builder.Services.AddHttpContextAccessor(); // Để truy cập HttpContext
+            builder.Services.AddTransient<TokenHandler>(); // Đăng ký TokenHandler
+            builder.Services.AddHttpClient("ApiClient")
+                .AddHttpMessageHandler<TokenHandler>(); // Gắn TokenHandler vào HttpClient
 
             var app = builder.Build();
 

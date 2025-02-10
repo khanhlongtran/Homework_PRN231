@@ -11,9 +11,9 @@ namespace FrontEnd.Pages.Products
     {
         private readonly HttpClient _httpClient;
 
-        public CreateModel(HttpClient httpClient)
+        public CreateModel(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         [BindProperty] public string PName { get; set; }
@@ -22,7 +22,7 @@ namespace FrontEnd.Pages.Products
         [BindProperty] public Guid CategoryId { get; set; }
         [BindProperty] public List<IFormFile> ImageFiles { get; set; }
         public IEnumerable<SelectListItem> Categories { get; set; }
-        
+
         /// <summary>
         /// GET Categories
         /// </summary>
@@ -44,7 +44,7 @@ namespace FrontEnd.Pages.Products
 
             return Page();
         }
-           
+
         /// <summary>
         /// POST product
         /// </summary>

@@ -10,9 +10,9 @@ namespace FrontEnd.Pages.Products
 
         private readonly HttpClient _httpClient;
 
-        public DetailsModel(HttpClient httpClient)
+        public DetailsModel(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
         public ProductDto Product { get; set; }
         public List<string> ProductImages { get; set; } = new();

@@ -12,9 +12,9 @@ namespace FrontEnd.Pages.Products
     {
         private readonly HttpClient _httpClient;
 
-        public EditModel(HttpClient httpClient)
+        public EditModel(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
         [BindProperty] public Guid Id { get; set; }
         [BindProperty] public string PName { get; set; }

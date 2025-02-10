@@ -1,9 +1,11 @@
 ﻿using Homework2.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Homework2.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class ProductsController : Controller
@@ -13,7 +15,7 @@ namespace Homework2.Controllers
         {
             _context = context;
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetProducts()
         {
@@ -188,6 +190,7 @@ namespace Homework2.Controllers
             return Ok(categories);
         }
 
+        [AllowAnonymous]
         [HttpGet("images/{imageName}")]
         public IActionResult GetImage(string imageName)
         {

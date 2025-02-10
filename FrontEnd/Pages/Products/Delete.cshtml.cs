@@ -7,9 +7,9 @@ namespace FrontEnd.Pages.Products
     {
         private readonly HttpClient _httpClient;
 
-        public DeleteModel(HttpClient httpClient)
+        public DeleteModel(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         [BindProperty] public Guid Id { get; set; }

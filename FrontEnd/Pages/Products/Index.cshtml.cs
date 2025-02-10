@@ -11,12 +11,11 @@ namespace FrontEnd.Pages.Products
         private readonly HttpClient _httpClient;
         public Dictionary<Guid, List<string>> ProductImages { get; set; } = new();  // Lưu danh sách ảnh theo ProductId
 
-
         public List<ProductDto> Products { get; set; } = new();
 
-        public IndexModel(HttpClient httpClient)
+        public IndexModel(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         /// <summary>
